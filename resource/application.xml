@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"
+       default-lazy-init="false">
+
+    <!--<bean id="messageService" class="service.MessageServiceImpl"/>
+
+    &lt;!&ndash; java  反射机制创建bean  （默认无参构造）  基本类型注入 &ndash;&gt;
+    <bean id="user" class="model.User">
+        <property name="name" value="小明"></property>
+        <property name="age" value="24"></property>
+        <property name="sex" value="男"></property>
+    </bean>
+
+    &lt;!&ndash; 使用静态工厂创建bean &ndash;&gt;
+    <bean id="user1" class="controller.factory.UserFactory" factory-method="userFactory"></bean>
+
+    &lt;!&ndash; 使用实例工厂创建bean &ndash;&gt;
+    <bean id="userFactory" class="controller.factory.UserFactory" ></bean>
+    <bean id="user2" factory-bean="userFactory" factory-method="userFactory1"></bean>-->
+
+
+    <!-- 加载配置 -->
+    <!--<context:property-placeholder ignore-unresolvable="true" location="classpath:resources.properties"/>-->
+
+    <!-- 配置c3p0数据源 -->
+    <!--<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="user" value="${jdbc.user}"></property>
+        <property name="password" value="${jdbc.password}"></property>
+        <property name="jdbcUrl" value="${jdbc.jdbcUrl}"></property>
+        <property name="driverClass" value="${jdbc.driverClass}"></property>
+
+        <property name="initialPoolSize" value="${jdbc.initialPoolSize}"></property>
+        <property name="maxPoolSize" value="${jdbc.maxPoolSize}"></property>
+    </bean>-->
+
+    <!--<import resource="classpath*:spring/**.xml"/>-->
+
+    <!--<bean id="personService" class="controller.proxy.staticProxy.PersonServiceImpl"></bean>
+
+    <bean id="transaction" class="controller.proxy.staticProxy.Transaction"></bean>
+
+    <bean id="personServiceProxy" class="controller.proxy.staticProxy.PersonServiceProxy">
+        <constructor-arg name="personService" ref="personService"></constructor-arg>
+        <constructor-arg name="transaction" ref="transaction"></constructor-arg>
+    </bean>-->
+
+    <!-- 导入目标类 -->
+    <bean id="personService" class="controller.aop.AopPersonServiceImpl"></bean>
+    <!-- 导入切面 -->
+    <bean id="myTransaction" class="controller.aop.AopTransaction"></bean>
+
+    <aop:config>
+            <aop:pointcut id="perform" expression="execution(* controller.aop.*.*(..))"></aop:pointcut>
+            <aop:aspect ref="myTransaction">
+                <aop:before method="beginTransaction" pointcut-ref="perform"></aop:before>
+            </aop:aspect>
+            <aop:aspect ref="myTransaction">
+                <aop:after method="commit" pointcut-ref="perform"></aop:after>
+            </aop:aspect>
+    </aop:config>
+
+
+
+</beans>
